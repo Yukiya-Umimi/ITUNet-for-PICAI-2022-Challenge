@@ -1,0 +1,6 @@
+**/*.tar.gz
+**/*.mhd
+**/*.zraw
+
+.DS_Store
+.vscode/

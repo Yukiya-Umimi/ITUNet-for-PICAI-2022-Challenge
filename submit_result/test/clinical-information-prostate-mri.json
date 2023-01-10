@@ -1,0 +1,9 @@
+{
+    "patient_age": 73,
+    "PSA_report": 19.18,
+    "PSAD_report": 0.34,
+    "prostate_volume_report": 57.0,
+    "scanner_manufacturer": "SIEMENS",
+    "scanner_model_name": "Skyra",
+    "diffusion_high_bvalue": 1400
+}

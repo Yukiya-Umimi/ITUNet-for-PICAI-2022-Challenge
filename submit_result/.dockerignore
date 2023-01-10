@@ -1,0 +1,9 @@
+**/*.tar.gz
+**/*.mha
+**/*.nii
+**/*.nii.gz
+**/*.mhd
+**/*.zraw
+
+.DS_Store
+.vscode/

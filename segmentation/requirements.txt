@@ -1,0 +1,10 @@
+numpy
+pydicom
+scikit-image
+scikit-learn
+scipy
+SimpleITK
+tqdm
+torch
+torchvision
+tensorboardX
