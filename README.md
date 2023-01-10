@@ -7,7 +7,7 @@ This method first uses preprocess to complete the data preprocessing, and the to
 Then the classification network and segmentation network are trained respectively. The classification network is EfficientNet-b5, while the segmentation network is ITUNet.
 Please note that in the process of generating pseudo labels, the classification network is needed to assist ITUNet to predict. 
  
-After training all networks, copy the optimal weights to the weight folder to be submitted, and then rename them. The submitted method still refers to the official method provided by Saha et al., which can be referred to [A](https://github.com/DIAGNijmegen/picai_unet_semi_supervised_gc_algorithm).
+After training all networks, copy the optimal weights to the weight folder to be submitted, and then rename them. The submitted method still refers to the official method provided by Saha et al., which can be referred to [U-Net (semi-supervised)](https://github.com/DIAGNijmegen/picai_unet_semi_supervised_gc_algorithm).
 
 ## Reference
 
