@@ -121,9 +121,9 @@ def make_semidata(base_dir,label_dir,output_dir,test_dir,seg_dir,csv_path):
 
         seg_image *= int(label_dict[path])
 
-        in_1 = sitk.ReadImage(os.path.join(base_dir,path + '_0000.nii.gz'))
-        in_2 = sitk.ReadImage(os.path.join(base_dir,path + '_0001.nii.gz'))
-        in_3 = sitk.ReadImage(os.path.join(base_dir,path + '_0002.nii.gz'))
+        in_1 = sitk.ReadImage(os.path.join(test_dir,path + '_0000.nii.gz'))
+        in_2 = sitk.ReadImage(os.path.join(test_dir,path + '_0001.nii.gz'))
+        in_3 = sitk.ReadImage(os.path.join(test_dir,path + '_0002.nii.gz'))
         
 
         in_1 = sitk.GetArrayFromImage(in_1).astype(np.int16)
