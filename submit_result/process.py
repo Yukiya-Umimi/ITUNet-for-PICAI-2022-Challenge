@@ -320,7 +320,8 @@ class csPCaAlgorithm(SegmentationAlgorithm):
 
         # save case-level likelihood
         with open(str(self.case_level_likelihood_output_file), 'w') as f:
-            json.dump((float(np.max(cspca_det_map_npy))+float(cls_p))/2, f)
+            # json.dump((float(np.max(cspca_det_map_npy))+float(cls_p))/2, f)
+            json.dump(float(np.max(cspca_det_map_npy)), f)
         # print(np.max(cspca_det_map_npy))
         print('finished!!')
 
