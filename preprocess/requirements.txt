@@ -7,3 +7,4 @@ scikit-learn
 scipy
 SimpleITK
 tqdm
+picai-prep==2.1.2
