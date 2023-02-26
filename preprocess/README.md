@@ -1,25 +1,18 @@
 # Preprocessing Utilities for PICAI 2022 CHALLENGE
 
-We used the preprocess tools provided by Saha et al .
+We used the preprocess tools provided by Saha et al.
 
-We changed matrix_size in the original processing to [24,384,384] . Then we made the code for generating json files and the code for generating preprocessed data into two python files: make_json.py and make_dataset.py 
+We changed `matrix_size` in the original preprocessing pipeline to `[24, 384, 384]`. Similarly, in the process of preprocessing, we also need to preprocess the unlabeled data, so that we can use the semi-supervised method to train our network later. The full preprocessing pipeline is captured in `preprocess.py`:
 
-You can run them after changing their data path by :
-
-`python make_json.py`
-`python make_dataset.py`
-
-Similarly, in the process of preprocessing, we also need to preprocess the unlabeled data, so that we can use the semi supervised method to train our network later. And you should change the date path and output path, too:
-
-```python
-    archive_dir="/input/path/to/mha/archive"
-    annotations_dir="/input/labels/csPCa_lesion_delineations/human_expert/resampled"
-    output_path= "/output/path/to//nnUNet_test_data"
+```bash
+python preprocess.py \
+    --workdir=/workdir \
+    --imagesdir=/input/images \
+    --labelsdir=/input/picai_labels \
+    --outputdir=/output \
+    --splits=picai_pub \
 ```
 
-Then you could run it by : 
-
-`python precess_testdata.py`
 
 ## Reference
 
