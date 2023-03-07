@@ -10,6 +10,7 @@ from picai_prep.examples.mha2nnunet.picai_archive import \
 from picai_prep.preprocessing import PreprocessingSettings, Sample
 from tqdm import tqdm
 from classification.cls_data import make_data
+from segmentation.make_dataset import make_segdata
 
 settings = {
     "preprocessing": {
@@ -167,6 +168,13 @@ def main(taskname="Task2201_picai_baseline"):
         label_dir=output_dir / "nnUNet_raw_data" / taskname / "labelsTr",
         d2_dir=output_dir / "classification" / "images_illness_3c",
         csv_save_path=output_dir / "classification" / "picai_illness_3c.csv",
+    )
+
+    # save 2D slices for segmentation
+    make_segdata(
+        base_dir=output_dir / "nnUNet_raw_data" / taskname / "imagesTr",
+        label_dir=output_dir / "nnUNet_raw_data" / taskname / "labelsTr",
+        output_dir=output_dir / "segmentation" / "segdata",
     )
 
 
