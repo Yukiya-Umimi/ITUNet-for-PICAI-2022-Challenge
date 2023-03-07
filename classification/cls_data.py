@@ -1,4 +1,6 @@
 import os
+from pathlib import Path
+from typing import Union
 import SimpleITK as sitk
 import pandas as pd
 from tqdm import tqdm
@@ -73,16 +75,15 @@ def store_images_labels_2d(save_path, patient_id, cts, labels):
     return plist,llist
 
 
-def make_data(csv_file = None):
-
-    base_dir = '../nnUNet_raw_data/Task2201_picai_baseline/imagesTr'
-    label_dir = '../nnUNet_raw_data/Task2201_picai_baseline/labelsTr'
-    d2_dir = 'path/to/images_illness_3c'
-    if not os.path.exists(d2_dir):
-        os.makedirs(d2_dir)
+def make_data(
+    base_dir: Union[Path, str] = '../nnUNet_raw_data/Task2201_picai_baseline/imagesTr',
+    label_dir: Union[Path, str] = '../nnUNet_raw_data/Task2201_picai_baseline/labelsTr',
+    d2_dir: Union[Path, str] = 'path/to/images_illness_3c',
+    csv_save_path: Union[Path, str] = 'picai_illness_3c.csv',
+):
+    os.makedirs(d2_dir, exist_ok=True)
 
     count = 0
-
 
     pathlist = ['_'.join(path.split('_')[:2]) for path in os.listdir(base_dir)]
     pathlist = list(set(pathlist))
@@ -120,7 +121,8 @@ def make_data(csv_file = None):
 
     print(count)
     csv_file = pd.DataFrame(info)
-    csv_file.to_csv('picai_illness_3c.csv', index=False)
+    Path(csv_save_path).parent.mkdir(parents=True, exist_ok=True)
+    csv_file.to_csv(csv_save_path, index=False)
 
 def predict_test5c():
     os.environ['CUDA_VISIBLE_DEVICES'] = '0'
