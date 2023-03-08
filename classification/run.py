@@ -1,10 +1,12 @@
 import argparse
-from trainer import Classifier
-from data_utils.csv_reader import csv_reader_single
-from config import INIT_TRAINER, SETUP_TRAINER, FOLD_NUM, CSV_PATH
-
 import time
+
 import numpy as np
+
+from classification.config import (CSV_PATH, FOLD_NUM, INIT_TRAINER,
+                                   SETUP_TRAINER)
+from classification.data_utils.csv_reader import csv_reader_single
+from classification.trainer import Classifier
 
 KEY = {
     'picai':['image_name','class_id'],
