@@ -12,7 +12,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Install dependencies
-RUN git clone https://github.com/Yukiya-Umimi/ITUNet-for-PICAI-2022-Challenge.git@training-pipeline /opt/algorithm
+RUN git clone git clone https://github.com/Yukiya-Umimi/ITUNet-for-PICAI-2022-Challenge /opt/algorithm --branch=training-pipeline
 ENV PATH="/opt/algorithm/ITUNet-for-PICAI-2022-Challenge:${PATH}"
 
 RUN pip install --upgrade pip && \
