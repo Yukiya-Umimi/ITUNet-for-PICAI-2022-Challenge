@@ -1,0 +1,4 @@
+torch
+efficientnet_pytorch
+tensorboardX
+torchvision
