@@ -1,6 +1,7 @@
 import argparse
 import os
 from pathlib import Path
+from typing import Union
 
 import SimpleITK as sitk
 from picai_prep import MHA2nnUNetConverter, atomic_image_write
@@ -8,6 +9,8 @@ from picai_prep.examples.mha2nnunet.picai_archive import \
     generate_mha2nnunet_settings
 from picai_prep.preprocessing import PreprocessingSettings, Sample
 from tqdm import tqdm
+from classification.cls_data import make_data
+from segmentation.make_dataset import make_segdata
 
 settings = {
     "preprocessing": {
@@ -26,7 +29,11 @@ settings = {
 }
 
 
-def convert_dataset_unlabeled(archive_dir, annotations_dir, outdir):
+def convert_dataset_unlabeled(
+    archive_dir: Union[Path, str],
+    annotations_dir: Union[Path, str],
+    output_dir: Union[Path, str],
+):
     ignore_files = [
         ".DS_Store",
         "LICENSE",
@@ -61,7 +68,7 @@ def convert_dataset_unlabeled(archive_dir, annotations_dir, outdir):
             if not all_scans_found:
                 continue
 
-            outlist = [os.path.join(outdir,subject_id+ '_' +str(i).zfill(4)+'.nii.gz') for i in range(3)]
+            outlist = [os.path.join(output_dir,subject_id+ '_' +str(i).zfill(4)+'.nii.gz') for i in range(3)]
 
             # construct annotation path
             annotation_path = f"{subject_id}.nii.gz"
@@ -98,7 +105,7 @@ def convert_dataset_unlabeled(archive_dir, annotations_dir, outdir):
                 atomic_image_write(scan, path=scan_properties, mkdir=True)
 
 
-def main(taskname="Task2203_picai_baseline"):
+def main(taskname="Task2201_picai_baseline"):
     """Preprocess data for (H. Kan et al.)"""
     parser = argparse.ArgumentParser()
 
@@ -107,9 +114,6 @@ def main(taskname="Task2203_picai_baseline"):
     parser.add_argument('--imagesdir', type=str, default=os.environ.get('SM_CHANNEL_IMAGES', "/input/images"))
     parser.add_argument('--labelsdir', type=str, default=os.environ.get('SM_CHANNEL_LABELS', "/input/picai_labels"))
     parser.add_argument('--outputdir', type=str, default=os.environ.get('SM_MODEL_DIR', "/output"))
-    parser.add_argument('--splits', type=str, default="picai_pubpriv",
-                        help="Cross-validation splits. Can be a path to a json file or one of the predefined splits: "
-                             "picai_pub, picai_pubpriv, picai_pub_nnunet, picai_pubpriv_nnunet, picai_debug.")
 
     args, _ = parser.parse_known_args()
 
@@ -139,7 +143,7 @@ def main(taskname="Task2203_picai_baseline"):
         archive_dir=images_dir,
         annotations_dir=annotations_dir,
         output_path=splits_path,
-        task="Task2201_picai_baseline"
+        task=taskname,
     )
 
     # convert data to nnU-Net Raw Data format
@@ -155,7 +159,22 @@ def main(taskname="Task2203_picai_baseline"):
     convert_dataset_unlabeled(
         archive_dir=images_dir,
         annotations_dir=annotations_dir,
-        output_path=output_dir / "nnUNet_test_data"
+        output_dir=output_dir / "nnUNet_test_data"
+    )
+
+    # save 2D slices for classification
+    make_data(
+        base_dir=output_dir / "nnUNet_raw_data" / taskname / "imagesTr",
+        label_dir=output_dir / "nnUNet_raw_data" / taskname / "labelsTr",
+        d2_dir=output_dir / "classification" / "images_illness_3c",
+        csv_save_path=output_dir / "classification" / "picai_illness_3c.csv",
+    )
+
+    # save 2D slices for segmentation
+    make_segdata(
+        base_dir=output_dir / "nnUNet_raw_data" / taskname / "imagesTr",
+        label_dir=output_dir / "nnUNet_raw_data" / taskname / "labelsTr",
+        output_dir=output_dir / "segmentation" / "segdata",
     )
 
 
