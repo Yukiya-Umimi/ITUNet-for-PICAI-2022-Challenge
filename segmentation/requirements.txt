@@ -8,3 +8,4 @@ tqdm
 torch
 torchvision
 tensorboardX
+picai_eval==1.4.4
