@@ -1,11 +1,10 @@
 import sys
+
 sys.path.append('..')
+
 from PIL import Image
 from torch.utils.data import Dataset
-import torch
-import torchvision.transforms as tr
-from torchvision import transforms
-import random
+
 
 class DataGenerator(Dataset):
   '''

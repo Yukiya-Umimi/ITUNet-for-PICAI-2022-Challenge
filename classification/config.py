@@ -13,7 +13,7 @@ FOLD_NUM = 5
 TTA_TIMES = 5
 
 NUM_CLASSES = 3
-from utils import get_weight_path,get_weight_list
+from classification.utils import get_weight_list, get_weight_path
 
 CSV_PATH = './picai_illness_3c.csv'
 CKPT_PATH = './ckpt/{}/{}/fold{}'.format(TASK,VERSION,str(CURRENT_FOLD))
