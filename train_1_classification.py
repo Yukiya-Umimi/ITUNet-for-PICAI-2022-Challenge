@@ -45,7 +45,7 @@ def main():
 
     # Train classification model
     label_dict = {}
-    INIT_TRAINER['device'] = 0
+    INIT_TRAINER['device'] = "0"
 
     # Set data path & classifier
     pre_csv_path = preprocessed_dir / "classification" / "picai_illness_3c.csv"
