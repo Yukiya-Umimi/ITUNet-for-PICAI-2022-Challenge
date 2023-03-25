@@ -191,7 +191,7 @@ class SemanticSeg(object):
         train_loss = AverageMeter()
         train_dice = AverageMeter()
 
-        from metrics import RunningDice
+        from segmentation.metrics import RunningDice
         run_dice = RunningDice(labels=range(self.num_classes),ignore_label=-1)
 
         for step,sample in enumerate(train_loader):
@@ -267,7 +267,7 @@ class SemanticSeg(object):
         val_loss = AverageMeter()
         val_dice = AverageMeter()
 
-        from metrics import RunningDice
+        from segmentation.metrics import RunningDice
         run_dice = RunningDice(labels=range(self.num_classes),ignore_label=-1)
 
         with torch.no_grad():
