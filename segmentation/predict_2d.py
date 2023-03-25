@@ -3,10 +3,10 @@ import os
 import numpy as np
 import SimpleITK as sitk
 import torch
-from model import itunet_2d
 from scipy import ndimage
 from torch.cuda.amp import autocast as autocast
 
+from segmentation.model import itunet_2d
 from segmentation.utils import get_weight_path
 
 
