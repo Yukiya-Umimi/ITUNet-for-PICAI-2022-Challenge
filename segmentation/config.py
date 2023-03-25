@@ -1,6 +1,7 @@
-import os
 import glob
-from utils import get_weight_path
+import os
+
+from segmentation.utils import get_weight_path
 
 TRANSFORMER_DEPTH = 24
 VERSION = 'itunet_d24'
