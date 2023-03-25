@@ -1,23 +1,25 @@
-import os
-import torch
-from torch.nn import DataParallel
-from torch.utils.data import DataLoader
-from torch.nn import functional as F
-import numpy as np
-import shutil
 import math
+import os
+import shutil
+import warnings
+
+import numpy as np
+import torch
+from picai_eval import evaluate
 from tensorboardX import SummaryWriter
+from torch.cuda.amp import GradScaler
+from torch.cuda.amp import autocast as autocast
+from torch.nn import DataParallel
+from torch.nn import functional as F
+from torch.utils.data import DataLoader
 from torchvision import transforms
 
-from torch.cuda.amp import autocast as autocast
-from torch.cuda.amp import GradScaler
+from segmentation.data_loader import (DataGenerator, Normalize, RandomFlip2D,
+                                      RandomRotate2D, To_Tensor)
+from segmentation.loss import Deep_Supervised_Loss
+from segmentation.model import itunet_2d
+from segmentation.utils import dfs_remove_weight, poly_lr
 
-from model import itunet_2d
-from data_loader import DataGenerator,To_Tensor,Normalize,RandomFlip2D,RandomRotate2D
-from utils import dfs_remove_weight, poly_lr
-from picai_eval import evaluate
-from loss import Deep_Supervised_Loss
-import warnings
 warnings.filterwarnings('ignore')
 
 
@@ -362,6 +364,7 @@ class SemanticSeg(object):
                 output = output.detach().cpu().numpy()
 
                 from report_guided_annotation import extract_lesion_candidates
+
                 # process softmax prediction to detection map
                 if mode == 'train':
                     cspca_det_map_npy = extract_lesion_candidates(

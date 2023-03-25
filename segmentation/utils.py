@@ -1,11 +1,11 @@
-import os,glob
-import pandas as pd 
+import os
+import random
+
 import h5py
-import SimpleITK as sitk
 import numpy as np
 import torch
-import random
 from skimage.metrics import hausdorff_distance
+
 
 def binary_dice(y_true, y_pred):
     smooth = 1e-7
