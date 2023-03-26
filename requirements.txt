@@ -1,5 +1,9 @@
+dataclasses
+jsonschema
 numpy
 pydicom
+picai-prep==2.1.2
+efficientnet_pytorch
 scikit-image==0.20.0
 scikit-learn
 scipy

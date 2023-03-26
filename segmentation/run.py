@@ -1,11 +1,12 @@
-import os
 import argparse
-from trainer import SemanticSeg
+import os
 import random
-
-from config import INIT_TRAINER, SETUP_TRAINER, VERSION, CURRENT_FOLD, PATH_LIST, FOLD_NUM, AP_LIST
-from utils import get_weight_path
 import time
+
+from segmentation.config import (AP_LIST, CURRENT_FOLD, FOLD_NUM, INIT_TRAINER,
+                                 PATH_LIST, SETUP_TRAINER, VERSION)
+from segmentation.trainer import SemanticSeg
+
 
 def get_cross_validation_by_sample(path_list, fold_num, current_fold):
 

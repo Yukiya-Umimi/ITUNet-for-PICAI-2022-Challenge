@@ -1,5 +1,3 @@
-#!/opt/conda/bin/python
-
 import argparse
 import os
 import shutil
@@ -45,7 +43,7 @@ def main():
 
     # Train classification model
     label_dict = {}
-    INIT_TRAINER['device'] = 0
+    INIT_TRAINER['device'] = "0"
 
     # Set data path & classifier
     pre_csv_path = preprocessed_dir / "classification" / "picai_illness_3c.csv"
@@ -102,8 +100,8 @@ def main():
         ckpt_dir = checkpoints_dir / f'ckpt/{TASK}/{VERSION}' / f'fold{fold}'
         ckpt_path = get_weight_path(ckpt_dir)
         dst = output_dir / f"ckpt/{TASK}/{VERSION}/fold{fold}.pth"
-        dst.mkdir(parents=True, exist_ok=True)
-        shutil.copy(ckpt_path, dst)
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(ckpt_path, dst)
 
 
 if __name__ == '__main__':

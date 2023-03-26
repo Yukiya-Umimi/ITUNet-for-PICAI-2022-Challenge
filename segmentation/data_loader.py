@@ -1,10 +1,11 @@
-from utils import hdf5_reader
-from torch.utils.data import Dataset
-import torch
-import numpy as np
 import random
-from PIL import Image
 
+import numpy as np
+import torch
+from PIL import Image
+from torch.utils.data import Dataset
+
+from segmentation.utils import hdf5_reader
 
 
 class Normalize(object):

@@ -1,12 +1,14 @@
-import glob
-import os 
+import os
+
 import numpy as np
-import torch
-from torch.cuda.amp import autocast as autocast
-from utils import get_weight_path
 import SimpleITK as sitk
-from model import itunet_2d
+import torch
 from scipy import ndimage
+from torch.cuda.amp import autocast as autocast
+
+from segmentation.model import itunet_2d
+from segmentation.utils import get_weight_path
+
 
 def predict_process(test_path,config,base_dir):
     # get weight
@@ -95,6 +97,7 @@ def postprecess(outdir):
         temp = temp[1]
         temp[temp<0.5] = 0
         from report_guided_annotation import extract_lesion_candidates
+
         # process softmax prediction to detection map
         cspca_det_map_npy = extract_lesion_candidates(
             temp, threshold='dynamic')[0]

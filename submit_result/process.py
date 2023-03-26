@@ -13,31 +13,25 @@
 #  limitations under the License.
 
 import json
-from pathlib import Path
 import os
+import time
+from pathlib import Path
 
-# os.environ['CUDA_VISIBLE_DEVICES'] = '3'
 import numpy as np
 import SimpleITK as sitk
 import torch
+from efficientnet_pytorch import EfficientNet
 from evalutils import SegmentationAlgorithm
 from evalutils.validators import (UniqueImagesValidator,
                                   UniquePathIndicesValidator)
-from picai_baseline.unet.training_setup.default_hyperparam import \
-    get_default_hyperparams
-from picai_baseline.unet.training_setup.neural_network_selector import \
-    neural_network_for_run
-from picai_baseline.unet.training_setup.preprocess_utils import z_score_norm
 from picai_prep.data_utils import atomic_image_write
-from picai_prep.preprocessing import Sample, PreprocessingSettings, crop_or_pad, resample_img
+from picai_prep.preprocessing import (PreprocessingSettings, Sample,
+                                      crop_or_pad, resample_img)
 from report_guided_annotation import extract_lesion_candidates
-from scipy.ndimage import gaussian_filter
 from torch.cuda.amp import autocast as autocast
-from model import itunet_2d
-from efficientnet_pytorch import EfficientNet
 from torch.nn import functional as F
-from scipy import ndimage
-import time
+
+from segmentation.model import itunet_2d
 
 
 class csPCaAlgorithm(SegmentationAlgorithm):

@@ -1,4 +1,5 @@
 import argparse
+import json
 import os
 from pathlib import Path
 from typing import Union
@@ -9,6 +10,7 @@ from picai_prep.examples.mha2nnunet.picai_archive import \
     generate_mha2nnunet_settings
 from picai_prep.preprocessing import PreprocessingSettings, Sample
 from tqdm import tqdm
+
 from classification.cls_data import make_data
 from segmentation.make_dataset import make_segdata
 
@@ -146,12 +148,17 @@ def main(taskname="Task2201_picai_baseline"):
         task=taskname,
     )
 
+    # add preprocessing settings to conversion plan
+    with open(splits_path, "r") as f:
+        mha2nnunet_settings = json.load(f)
+    mha2nnunet_settings["preprocessing"] = settings["preprocessing"]
+
     # convert data to nnU-Net Raw Data format
     archive = MHA2nnUNetConverter(
         scans_dir=images_dir,
         annotations_dir=annotations_dir,
         output_dir=output_dir / "nnUNet_raw_data",
-        mha2nnunet_settings=splits_path,
+        mha2nnunet_settings=mha2nnunet_settings,
     )
     archive.convert()
 
