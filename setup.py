@@ -14,5 +14,5 @@ if __name__ == '__main__':
             "Bug Tracker": "https://github.com/Yukiya-Umimi/ITUNet-for-PICAI-2022-Challenge/issues"
         },
         license='Apache 2.0',
-        packages=setuptools.find_packages('src', exclude=['tests']),
+        packages=setuptools.find_packages('.', exclude=['tests']),
     )

@@ -13,8 +13,6 @@ RUN apt-get update && \
 
 # Install dependencies
 WORKDIR /opt/algorithm
-RUN git clone https://github.com/Yukiya-Umimi/ITUNet-for-PICAI-2022-Challenge --branch sagemaker-pipeline
-ENV PATH="/opt/algorithm/ITUNet-for-PICAI-2022-Challenge:${PATH}"
-
+COPY . /opt/algorithm/ITUNet-for-PICAI-2022-Challenge
 RUN pip install --upgrade pip && \
-    pip install --no-cache-dir -r /opt/algorithm/ITUNet-for-PICAI-2022-Challenge/preprocess/requirements.txt
+    pip install -e /opt/algorithm/ITUNet-for-PICAI-2022-Challenge
