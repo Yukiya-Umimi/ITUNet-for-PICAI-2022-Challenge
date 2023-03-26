@@ -100,7 +100,7 @@ def main():
         ckpt_dir = checkpoints_dir / f'ckpt/{TASK}/{VERSION}' / f'fold{fold}'
         ckpt_path = get_weight_path(ckpt_dir)
         dst = output_dir / f"ckpt/{TASK}/{VERSION}/fold{fold}.pth"
-        dst.mkdir(parents=True, exist_ok=True)
+        dst.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(ckpt_path, dst)
 
 
