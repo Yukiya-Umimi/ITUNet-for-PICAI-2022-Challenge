@@ -1,8 +1,9 @@
 import argparse
 import os
-import shutil
 from pathlib import Path
-from subprocess import check_call
+
+from classification.cls_data import predict_test5c
+from segmentation.predict_2d import postprecess, save_npy, vote_dir
 
 
 def main(taskname="Task2203_picai_baseline"):
@@ -38,8 +39,34 @@ def main(taskname="Task2203_picai_baseline"):
     print(f"labels_dir: {labels_dir}")
     print(f"output_dir: {output_dir}")
 
-    print("Images folder:", os.listdir(images_dir))
-    print("Labels folder:", os.listdir(labels_dir))
+    # Perform inference with the classification model
+    predict_test5c(
+        weight_path: str = '/opt/cls_algorithm/weights/',
+        base_dir: str = 'path/to/nnUNet_test_data',
+        csv_save_path: str = 'test_3c.csv',
+    )
+
+    # Perform inference with the segmentation model
+    data_path = preprocessed_dir / "nnUNet_test_data"
+    outdir = './segout/segmentation_result'
+    config = Config()
+    for fold in range(1,6):
+        print('****fold%d****'%fold)
+        config.fold = fold
+        config.ckpt_path = f'./new_ckpt/seg/{config.version}/fold{str(fold)}'
+        save_dir = f'./segout/{config.version}/fold{str(fold)}'
+        if not os.path.exists(save_dir):
+            os.makedirs(save_dir)
+        pathlist = ['_'.join(path.split('_')[:2]) for path in os.listdir(data_path)]
+        pathlist = list(set(pathlist))
+
+        for path in pathlist:
+            pred = predict_process(path,config,data_path)
+            print(pred.shape)
+            np.save(os.path.join(save_dir,path+'.npy'),pred)
+    vote_dir()
+    postprecess(outdir)
+
 
     # Generate pseudo labels
     # TODO: add commands for generating pseudo labels
