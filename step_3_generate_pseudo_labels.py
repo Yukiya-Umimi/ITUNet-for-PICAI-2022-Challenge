@@ -11,7 +11,7 @@ from segmentation.predict_2d import (Config, postprecess, predict_process,
 
 
 def main():
-    """Training method from Swangeese team for PI-CAI Challenge."""
+    """Prepare detection dataset for method from Swangeese team for PI-CAI Challenge."""
     parser = argparse.ArgumentParser()
 
     # input data and model directories
