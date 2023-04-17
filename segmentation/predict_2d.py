@@ -1,4 +1,6 @@
 import os
+from pathlib import Path
+from typing import Optional, Union
 
 import numpy as np
 import SimpleITK as sitk
@@ -86,9 +88,13 @@ def vote_dir(datadir = None):
         re = np.mean(re,axis=0)
         np.save(os.path.join(outdir,path),re)
 
-def postprecess(outdir):
+def postprecess(
+    outdir: Union[Path, str],
+    data_dir: Optional[Union[Path, str]] = None
+):
     config = Config()
-    data_dir = f'./segout/{config.version}/avg'
+    if data_dir is None:
+        data_dir = f'./segout/{config.version}/avg'
     if not os.path.exists(outdir):
         os.makedirs(outdir)
     path_list = list(os.listdir(data_dir))
