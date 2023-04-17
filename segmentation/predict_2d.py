@@ -73,9 +73,10 @@ def save_npy(data_path):
             print(pred.shape)
             np.save(os.path.join(save_dir,path+'.npy'),pred)
 
-def vote_dir():
+def vote_dir(datadir = None):
     config = Config()
-    datadir = f'./segout/{config.version}'
+    if datadir is None:
+        datadir = f'./segout/{config.version}'
     outdir = os.path.join(datadir,'avg')
     if not os.path.exists(outdir):
         os.makedirs(outdir)
