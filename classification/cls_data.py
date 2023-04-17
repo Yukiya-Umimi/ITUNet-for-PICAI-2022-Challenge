@@ -123,10 +123,13 @@ def make_data(
     Path(csv_save_path).parent.mkdir(parents=True, exist_ok=True)
     csv_file.to_csv(csv_save_path, index=False)
 
-def predict_test5c():
+def predict_test5c(
+    weight_path: str = '/opt/cls_algorithm/weights/',
+    base_dir: str = 'path/to/nnUNet_test_data',
+    csv_save_path: str = 'test_3c.csv',
+):
     from efficientnet_pytorch import EfficientNet
     os.environ['CUDA_VISIBLE_DEVICES'] = '0'
-    weight_path = '/opt/cls_algorithm/weights/'
     weight_list = get_weight_list(weight_path,choice=[1,2,3,4,5])
     print(weight_list)
     cls_nets = []
@@ -141,7 +144,6 @@ def predict_test5c():
         cls_net.eval()
         cls_nets.append(cls_net)
 
-    base_dir = 'path/to/nnUNet_test_data'
     info = {}
     info['id'] = []
     info['label'] = []
@@ -151,9 +153,8 @@ def predict_test5c():
     l = len(pathlist)
     print(l)
 
-    for i in range(l):
+    for path in pathlist:
         # count += len(sub_path_list)
-        path = pathlist[i]
         in_1 = sitk.ReadImage(os.path.join(base_dir,path + '_0000.nii.gz'))
         in_2 = sitk.ReadImage(os.path.join(base_dir,path + '_0001.nii.gz'))
         in_3 = sitk.ReadImage(os.path.join(base_dir,path + '_0002.nii.gz'))
@@ -192,7 +193,7 @@ def predict_test5c():
         info['label'].append(l)
 
     cc= pd.DataFrame(info)
-    cc.to_csv('test_3c.csv',index=False)
+    cc.to_csv(csv_save_path,index=False)
 
 
 if __name__ == "__main__":
