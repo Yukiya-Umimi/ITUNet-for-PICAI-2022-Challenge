@@ -106,7 +106,7 @@ def make_semidata(base_dir,label_dir,output_dir,test_dir,seg_dir,csv_path):
 
     count = 0
 
-    rand_list = list(range(1500))
+    rand_list = list(range(len(label_dict)))
     random.shuffle(rand_list)
     print(rand_list)
 
