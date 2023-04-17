@@ -10,7 +10,7 @@ from segmentation.predict_2d import (Config, postprecess, predict_process,
                                      vote_dir)
 
 
-def main(taskname="Task2203_picai_baseline"):
+def main():
     """Training method from Swangeese team for PI-CAI Challenge."""
     parser = argparse.ArgumentParser()
 
