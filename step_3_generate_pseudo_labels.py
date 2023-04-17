@@ -5,7 +5,9 @@ from pathlib import Path
 import numpy as np
 
 from classification.cls_data import predict_test5c
-from segmentation.predict_2d import postprecess, predict_process, vote_dir, Config
+from segmentation.make_dataset import make_semidata
+from segmentation.predict_2d import (Config, postprecess, predict_process,
+                                     vote_dir)
 
 
 def main(taskname="Task2203_picai_baseline"):
@@ -78,12 +80,15 @@ def main(taskname="Task2203_picai_baseline"):
         outdir=outdir,
     )
 
-
-    # Generate pseudo labels
-    # TODO: add commands for generating pseudo labels
-
-    # Export pseudo labels
-    # TODO: add commands for exporting pseudo labels
+    # Prepare dataset for detection
+    make_semidata(
+        base_dir=preprocessed_dir / 'nnUNet_raw_data/Task2201_picai_baseline/imagesTr',
+        label_dir=preprocessed_dir / 'nnUNet_raw_data/Task2201_picai_baseline/labelsTr',
+        output_dir=output_dir,
+        test_dir=preprocessed_dir / "nnUNet_test_data",
+        seg_dir=outdir,
+        csv_path=workdir / 'test_3c.csv',
+    )
 
 
 if __name__ == '__main__':
