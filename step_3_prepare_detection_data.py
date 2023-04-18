@@ -2,12 +2,9 @@ import argparse
 import os
 from pathlib import Path
 
-import numpy as np
-
 from classification.cls_data import predict_test5c
 from segmentation.make_dataset import make_semidata
-from segmentation.predict_2d import (Config, postprecess, predict_process,
-                                     vote_dir)
+from segmentation.predict_2d import Config, postprecess, save_npy, vote_dir
 
 
 def main():
@@ -45,23 +42,14 @@ def main():
     # Perform inference with the segmentation model
     data_path = preprocessed_dir / "nnUNet_test_data"
     outdir = workdir / 'segout/segmentation_result'
-    config = Config()
-    for fold in range(1,6):
-        print('****fold%d****'%fold)
-        config.fold = fold
-        config.ckpt_path = supervised_weights_dir / f'ckpt/seg/{config.version}/fold{str(fold)}'
-        save_dir = workdir / f'segout/{config.version}/fold{str(fold)}'
-        if not os.path.exists(save_dir):
-            os.makedirs(save_dir)
-        pathlist = ['_'.join(path.split('_')[:2]) for path in os.listdir(data_path)]
-        pathlist = list(set(pathlist))
-
-        for path in pathlist:
-            pred = predict_process(path,config,data_path)
-            print(pred.shape)
-            np.save(os.path.join(save_dir,path+'.npy'),pred)
+    save_npy(
+        data_path=data_path,
+        ckpt_path_base=supervised_weights_dir / 'ckpt/seg',
+        save_dir_base=workdir / 'segout',
+    )
 
     # Ensemble segmentation results
+    config = Config()
     vote_dir(datadir=workdir / f'segout/{config.version}')
 
     # Postprocess segmentation results

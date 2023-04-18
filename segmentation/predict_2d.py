@@ -58,13 +58,17 @@ def predict_process(test_path,config,base_dir):
     pred = np.concatenate(pred,axis=0).transpose((1,0,2,3))
     return pred
 
-def save_npy(data_path):
+def save_npy(
+    data_path: Union[Path, str],
+    ckpt_path_base: Union[Path, str] = './new_ckpt/seg',
+    save_dir_base: Union[Path, str] = './segout'
+):
     config = Config()
     for fold in range(1,6):
         print('****fold%d****'%fold)
         config.fold = fold
-        config.ckpt_path = f'./new_ckpt/seg/{config.version}/fold{str(fold)}'
-        save_dir = f'./segout/{config.version}/fold{str(fold)}'
+        config.ckpt_path = os.path.join(ckpt_path_base, config.version, f'fold{fold}')
+        save_dir = os.path.join(save_dir_base, config.version, f'fold{fold}')
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
         pathlist = ['_'.join(path.split('_')[:2]) for path in os.listdir(data_path)]
