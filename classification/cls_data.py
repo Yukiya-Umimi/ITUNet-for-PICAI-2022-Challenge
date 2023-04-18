@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+import re
 from typing import Union
 import SimpleITK as sitk
 import pandas as pd
@@ -44,7 +45,12 @@ def get_weight_list(ckpt_path,choice=None):
     path_list = []
     for fold in os.scandir(ckpt_path):
         if choice is not None:
-            if not (int(fold.name[-1]) in choice or int(fold.name[-5]) in choice):
+            # check if fold number is in choice
+            match = re.search(r'fold(\d+)', fold.name)
+            if match is None:
+                continue
+            fold_num = int(match.group(1))
+            if fold_num not in choice:
                 continue
         if fold.is_dir():
             weight_path = os.listdir(fold.path)
