@@ -50,6 +50,9 @@ def get_weight_list(
 
     # search for weight files saved as `fold{fold_num}/epoch:{epoch}-train_loss:{train_loss}-val_loss:{val_loss}-train_acc:{train_acc}-val_ap:{val_ap}.pth
     for path in ckpt_path.glob('fold*'):
+        if not path.is_dir():
+            continue
+
         if choice is not None:
             # check if fold number is in choice
             match = re.search(r'fold(\d+)', path.name)
