@@ -43,7 +43,7 @@ def hdf5_reader(data_path, key):
 def get_weight_list(ckpt_path,choice=None):
     path_list = []
     for fold in os.scandir(ckpt_path):
-        if choice is not None and eval(str(fold.name)[-1]) not in choice:
+        if choice is not None and fold.name[-1] not in choice:
             continue
         if fold.is_dir():
             weight_path = os.listdir(fold.path)
