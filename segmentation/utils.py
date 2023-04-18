@@ -1,5 +1,7 @@
 import os
 import random
+from pathlib import Path
+from typing import Union
 
 import h5py
 import numpy as np
@@ -68,9 +70,13 @@ def count_params_and_macs(net,input_shape):
 
 
 
-def get_weight_path(ckpt_path):
+def get_weight_path(
+    ckpt_path: Union[Path, str]
+):
 
-    if os.path.isdir(ckpt_path):
+    if os.path.isfile(ckpt_path):
+        return ckpt_path
+    elif os.path.isdir(ckpt_path):
         pth_list = os.listdir(ckpt_path)
         if len(pth_list) != 0:
             pth_list.sort(key=lambda x:int(x.split('-')[0].split(':')[-1]))
@@ -78,6 +84,8 @@ def get_weight_path(ckpt_path):
         else:
             return None
     else:
+        if os.path.exists(str(ckpt_path) + ".pth"):
+            return str(ckpt_path) + ".pth"
         return None
 
 def get_weight_list(ckpt_path,choice=None):
