@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 import re
-from typing import Union
+from typing import List, Optional, Union
 import SimpleITK as sitk
 import pandas as pd
 from tqdm import tqdm
@@ -41,22 +41,41 @@ def hdf5_reader(data_path, key):
 
     return image
 
-def get_weight_list(ckpt_path,choice=None):
+def get_weight_list(
+    ckpt_path: Union[Path, str],
+    choice: Optional[List[int]] = None,
+):
+    ckpt_path = Path(ckpt_path)
     path_list = []
-    for fold in os.scandir(ckpt_path):
+
+    # search for weight files saved as `fold{fold_num}/epoch:{epoch}-train_loss:{train_loss}-val_loss:{val_loss}-train_acc:{train_acc}-val_ap:{val_ap}.pth
+    for path in ckpt_path.glob('fold*'):
         if choice is not None:
             # check if fold number is in choice
-            match = re.search(r'fold(\d+)', fold.name)
+            match = re.search(r'fold(\d+)', path.name)
             if match is None:
                 continue
             fold_num = int(match.group(1))
             if fold_num not in choice:
                 continue
-        if fold.is_dir():
-            weight_path = os.listdir(fold.path)
-            weight_path.sort(key=lambda x:int(x.split('-')[0].split(':')[-1]))
-            path_list.append(os.path.join(fold.path,weight_path[-1]))
-            # print(os.path.join(fold.path,weight_path[-1]))
+
+        # select checkpoint
+        weight_path = os.listdir(path)
+        weight_path.sort(key=lambda x:int(x.split('-')[0].split(':')[-1]))
+        path_list.append(os.path.join(path, weight_path[-1]))
+
+    # search for weight files saved as `fold{fold_num}.pth`
+    for path in ckpt_path.glob('fold*.pth'):
+        if choice is not None:
+            # check if fold number is in choice
+            match = re.search(r'fold(\d+)', path.name)
+            if match is None:
+                continue
+            fold_num = int(match.group(1))
+            if fold_num not in choice:
+                continue
+        path_list.append(path)
+
     return path_list
 
 def store_images_labels_2d(save_path, patient_id, cts, labels):
