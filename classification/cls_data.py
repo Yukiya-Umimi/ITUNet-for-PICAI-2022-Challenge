@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
-from typing import Union
+import re
+from typing import List, Optional, Union
 import SimpleITK as sitk
 import pandas as pd
 from tqdm import tqdm
@@ -40,16 +41,44 @@ def hdf5_reader(data_path, key):
 
     return image
 
-def get_weight_list(ckpt_path,choice=None):
+def get_weight_list(
+    ckpt_path: Union[Path, str],
+    choice: Optional[List[int]] = None,
+):
+    ckpt_path = Path(ckpt_path)
     path_list = []
-    for fold in os.scandir(ckpt_path):
-        if choice is not None and eval(str(fold.name)[-1]) not in choice:
+
+    # search for weight files saved as `fold{fold_num}/epoch:{epoch}-train_loss:{train_loss}-val_loss:{val_loss}-train_acc:{train_acc}-val_ap:{val_ap}.pth
+    for path in ckpt_path.glob('fold*'):
+        if not path.is_dir():
             continue
-        if fold.is_dir():
-            weight_path = os.listdir(fold.path)
-            weight_path.sort(key=lambda x:int(x.split('-')[0].split(':')[-1]))
-            path_list.append(os.path.join(fold.path,weight_path[-1]))
-            # print(os.path.join(fold.path,weight_path[-1]))
+
+        if choice is not None:
+            # check if fold number is in choice
+            match = re.search(r'fold(\d+)', path.name)
+            if match is None:
+                continue
+            fold_num = int(match.group(1))
+            if fold_num not in choice:
+                continue
+
+        # select checkpoint
+        weight_path = os.listdir(path)
+        weight_path.sort(key=lambda x:int(x.split('-')[0].split(':')[-1]))
+        path_list.append(os.path.join(path, weight_path[-1]))
+
+    # search for weight files saved as `fold{fold_num}.pth`
+    for path in ckpt_path.glob('fold*.pth'):
+        if choice is not None:
+            # check if fold number is in choice
+            match = re.search(r'fold(\d+)', path.name)
+            if match is None:
+                continue
+            fold_num = int(match.group(1))
+            if fold_num not in choice:
+                continue
+        path_list.append(path)
+
     return path_list
 
 def store_images_labels_2d(save_path, patient_id, cts, labels):
@@ -123,10 +152,13 @@ def make_data(
     Path(csv_save_path).parent.mkdir(parents=True, exist_ok=True)
     csv_file.to_csv(csv_save_path, index=False)
 
-def predict_test5c():
+def predict_test5c(
+    weight_path: str = '/opt/cls_algorithm/weights/',
+    base_dir: str = 'path/to/nnUNet_test_data',
+    csv_save_path: str = 'test_3c.csv',
+):
     from efficientnet_pytorch import EfficientNet
     os.environ['CUDA_VISIBLE_DEVICES'] = '0'
-    weight_path = '/opt/cls_algorithm/weights/'
     weight_list = get_weight_list(weight_path,choice=[1,2,3,4,5])
     print(weight_list)
     cls_nets = []
@@ -141,7 +173,6 @@ def predict_test5c():
         cls_net.eval()
         cls_nets.append(cls_net)
 
-    base_dir = 'path/to/nnUNet_test_data'
     info = {}
     info['id'] = []
     info['label'] = []
@@ -151,9 +182,8 @@ def predict_test5c():
     l = len(pathlist)
     print(l)
 
-    for i in range(l):
+    for path in pathlist:
         # count += len(sub_path_list)
-        path = pathlist[i]
         in_1 = sitk.ReadImage(os.path.join(base_dir,path + '_0000.nii.gz'))
         in_2 = sitk.ReadImage(os.path.join(base_dir,path + '_0001.nii.gz'))
         in_3 = sitk.ReadImage(os.path.join(base_dir,path + '_0002.nii.gz'))
@@ -192,7 +222,7 @@ def predict_test5c():
         info['label'].append(l)
 
     cc= pd.DataFrame(info)
-    cc.to_csv('test_3c.csv',index=False)
+    cc.to_csv(csv_save_path,index=False)
 
 
 if __name__ == "__main__":

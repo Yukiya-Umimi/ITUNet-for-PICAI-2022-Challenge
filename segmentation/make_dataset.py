@@ -106,17 +106,19 @@ def make_semidata(base_dir,label_dir,output_dir,test_dir,seg_dir,csv_path):
 
     count = 0
 
-    rand_list = list(range(1500))
+    # collect paths
+    pathlist_test_dir = ['_'.join(path.split('_')[:2]) for path in os.listdir(test_dir)]
+    pathlist_test_dir = list(set(pathlist_test_dir))
+
+    pathlist_base_dir = ['_'.join(path.split('_')[:2]) for path in os.listdir(base_dir)]
+    pathlist_base_dir = list(set(pathlist_base_dir))
+
+    # generate random IDs
+    rand_list = list(range(len(pathlist_test_dir) + len(pathlist_base_dir)))
     random.shuffle(rand_list)
     print(rand_list)
 
-    pathlist = ['_'.join(path.split('_')[:2]) for path in os.listdir(test_dir)]
-    pathlist = list(set(pathlist))
-    l = len(pathlist)
-
-    for i in tqdm(range(l)):
-        path = pathlist[i]
-
+    for path in tqdm(pathlist_test_dir):
         seg_image = np.load(os.path.join(seg_dir,path + '.npy')).astype(np.uint8)
 
         seg_image *= int(label_dict[path])
@@ -142,11 +144,7 @@ def make_semidata(base_dir,label_dir,output_dir,test_dir,seg_dir,csv_path):
 
         count += 1
 
-    pathlist = ['_'.join(path.split('_')[:2]) for path in os.listdir(base_dir)]
-    pathlist = list(set(pathlist))
-
-
-    for path in tqdm(pathlist):
+    for path in tqdm(pathlist_base_dir):
         seg = sitk.ReadImage(os.path.join(label_dir,path + '.nii.gz'))
 
         seg_image = sitk.GetArrayFromImage(seg).astype(np.uint8)

@@ -1,4 +1,6 @@
 import os
+from pathlib import Path
+from typing import Optional, Union
 
 import numpy as np
 import SimpleITK as sitk
@@ -56,13 +58,17 @@ def predict_process(test_path,config,base_dir):
     pred = np.concatenate(pred,axis=0).transpose((1,0,2,3))
     return pred
 
-def save_npy(data_path):
+def save_npy(
+    data_path: Union[Path, str],
+    ckpt_path_base: Union[Path, str] = './new_ckpt/seg',
+    save_dir_base: Union[Path, str] = './segout'
+):
     config = Config()
     for fold in range(1,6):
         print('****fold%d****'%fold)
         config.fold = fold
-        config.ckpt_path = f'./new_ckpt/seg/{config.version}/fold{str(fold)}'
-        save_dir = f'./segout/{config.version}/fold{str(fold)}'
+        config.ckpt_path = os.path.join(ckpt_path_base, config.version, f'fold{fold}')
+        save_dir = os.path.join(save_dir_base, config.version, f'fold{fold}')
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
         pathlist = ['_'.join(path.split('_')[:2]) for path in os.listdir(data_path)]
@@ -73,9 +79,10 @@ def save_npy(data_path):
             print(pred.shape)
             np.save(os.path.join(save_dir,path+'.npy'),pred)
 
-def vote_dir():
+def vote_dir(datadir = None):
     config = Config()
-    datadir = f'./segout/{config.version}'
+    if datadir is None:
+        datadir = f'./segout/{config.version}'
     outdir = os.path.join(datadir,'avg')
     if not os.path.exists(outdir):
         os.makedirs(outdir)
@@ -85,9 +92,13 @@ def vote_dir():
         re = np.mean(re,axis=0)
         np.save(os.path.join(outdir,path),re)
 
-def postprecess(outdir):
+def postprecess(
+    outdir: Union[Path, str],
+    data_dir: Optional[Union[Path, str]] = None
+):
     config = Config()
-    data_dir = f'./segout/{config.version}/avg'
+    if data_dir is None:
+        data_dir = f'./segout/{config.version}/avg'
     if not os.path.exists(outdir):
         os.makedirs(outdir)
     path_list = list(os.listdir(data_dir))
